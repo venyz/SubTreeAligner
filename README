@@ -1,0 +1,126 @@
+This is the Readme file for ‘align’ v2.8. Here you will find information on how to compile, install and run the program.
+
+The source code is distributed with a configure script, which handles the configuration options. This script can be found in the ‘build’ sub-folder. Run ‘./build/configure --help’ for a full list of options.
+I suggest configuration and compilation in the ‘build’ folder. Configuration and compilation in other folders has not been tested and is discouraged.
+To speed up reconfiguration, I suggest passing the argument ‘-C’ to the configure script, which will turn on caching.
+
+Run ./configure [options] to configure the tools you want to compile. There is an option for the configure script that controls which tools are to be compiled and installed: --enable-tools="<list of tools>" By default, only the tree-to-tree aligner is compiled and installed. To install all available tools, use ‘--enable-tools=all’. If you want to specify precisely which tools are to be built and installed, use ‘align’ for the standard tree-to-tree aligner; ‘lattice’ for a full-search based tree-to-tree aligner (experimental); ‘str2str’ for the string-to-string, tree-to-string and string-to-tree alignment modules; ‘chunk’ for the chunk extraction tool; ‘print’ for the sentence extraction tool. Make sure you quote the list of tools.
+Run ‘make && make install’ to compile and install the software. The default installation destination is /usr/local, but it can be changed using configure options.
+
+If you have a multi-CPU system and are using a recent version of make, you can run make in parallel by supplying the ‘-j’ option. This may speed up the compilation significantly.
+Also, if you have GCC 4.2 or later, you can compile some tools for parallel execution. Currently only the tree-to-tree and string-to-string aligners are set up for it, but parallelisation will be gradually introduced to the rest of the tools as well (where appropriate). To configure the software for parallel execution, supply the ‘--enable-parallel’ option to configure.
+When compiled for parallel execution, the OMP_DYNAMIC environment variable controls the behaviour of the software. If you set this variable to FALSE, the software will use all available CPUs on your system, regardless of whether there are other processes running or not. If you are running other resource intensive tasks on your system you may want to set OMP_DYNAMIC to TRUE. In this case, the software will decide dynamically what amount of resources to use without interfering with other running processes.
+
+IMPORTANT!!! The system will only operate reliably on UTF-8 encoded input files. Because of this, make sure to convert all your files to the proper encoding before attempting to use the system. All output is UTF-8 encoded by default.
+
+
+### Tree-to-Tree Aligner ###
+The options controlling the functionality of the aligner have defaults that can be changed by passing options to the configure script. Here is a list of the different options and their function:
+	--enable-data-set=<data_set_name>  Because the nodes in the HomeCentre corpus are already numbered, it has to be handled differently to other corpora. This is controlled by this option. If the aligner will be used for the HomeCentre corpus, you should add ‘--enable-data-set="HomeCentre"’ to the configure script options. Otherwise the option should be set to a different string, which may describe the data set it will operate on. By default this option is set to "unknown".
+	--disable-span1  If you supply this option to the configure script, the aligner will be compiled without the ‘span1’ feature. By default, this feature is turned on.
+	--enable-score={1, 2}  You can choose the scoring mechanism that is to be used by the aligner by using this option. By default, the aligner will use ‘score2’ and to use ‘score1’ instead, you have to supply ‘--enable-score=1’ to configure.
+	--enable-skip={1, 2}  You can choose the selection algorithm that is to be used by the aligner by using this option. By default, the aligner will use ‘skip2’ and to use ‘skip1’ instead, you have to supply ‘--enable-skip=1’ to configure.
+	--enable-rescoring  This option turns on a rescoring algorithm that aims to guide the selection of links based on what links have already been established. The option is off by default.
+	--enable-lowercasing  This option should be defined, if you are using lowercased word-alignment data. It is disabled by default.
+	--enable-simple-scores  Turning on this option will produce an aligner that calculates the scores based only on the internal probabilities. WARNING!!! At the moment this option is ignored and off by default.
+	--enable-log-based-probabilities  If you turn on this option, the link hypothesis scores will be stored as logarithms. This option is on by default. There are two reasons as to why you would want to do this. First, there is a slight reduction in run time. Second, for very long sentences the hypothesis scores go beyond 1.e-380, which is the limit of the double type. Storing the scores as logarithms will allow you to use double for those sentences, thus saving memory. WARNING!!! Due to the lack of precision when storing floating point numbers in memory, using logarithms will produce slightly different results than not using them. Because of this you should stick to either using them or not from the very beginning. WARNING!!! Logarithms cannot be used with ‘score1’ because of the way the scores are calculated according to that formula.
+
+The aligner should be run with command line arguments. You would normally run it in one of the following two ways:
+	align <source_to_target_lex_probs> <target_to_source_lex_probs> [<source_to_target_phrase_probs>] <input_corpus>
+	align <config_file>
+The command line arguments are not checked strictly for correctness, so the behaviour of the aligner is undefined when supplied with erroneous arguments. Data coruption may not occur, as files are only opened for reading.
+
+You should always supply the aligner with proper command line arguments. Here is a description:
+	<source_to_target_lex_probs>  The path to the file which holds the source-to-target word alignment probabilities. This is the “lex.0-0.f2n” file produced by Moses when running it in source-to-target mode. The format is “<target> <source> <probability>\n”
+	<target_to_source_lex_probs>  The path to the file which holds the target-to-source word alignment probabilities. This is the “lex.0-0.f2n” file produced by Moses when running it in target-to-source mode. The format is “<source> <target> <probability>\n”
+	<source_to_target_phrase_probs>  The path to the file which holds the source-to-target phrase alignment probabilities. This is the “phrase_table.0-0” file produced by Moses when running it in source-to-target mode. The file produced by Moses is gzipped by default, but it needs to be decompressed in advance for use by the aligner. In a later version an option might be added to read the compressed version of the file directly. This file is currently used only to calculate some statistics and you can omit it if you don’t need them. The format is “<source> ||| <target> ||| <source_to_target_prob> <irrelevant_number> <target_to_source_prob> <irrelevant_number> <irrelevant_number>\n”
+	<input_corpus>  The path to the file containing the aligned parsed sentences or “-”. Supplying “-” for this parameter will direct the aligner to read data from the standard input, rather than from a file. The format is "<source>\n<target>\n\n\n". The parsed sentences should be in bracketed format, using “(” and “)” as delimiters. White-space (except new lines) is irrelevant and any character is allowed in both terminal and non-terminal nodes. Generally, the aligner would read anything that starts with “(” and ends with “)” and interpret it as a sentence parse. It should only choke on heavily distorted strings containing random number of parentheses.
+	<config_file>  The path to a file containing run-time options, one option per line. This file has the format “<option_name> <option_value>\n”. Any line starting with a ‘#’ character will be ignored. You can specify the following options in the file that correspond to command line options: “input” — corresponds to <input_corpus>; “source_alignments” — <source_to_target_lex_probs>; “target_alignments” — <target_to_source_lex_probs>; “phrase_alignments” — <source_to_target_phrase_probs>. The rules for these options are as for their command-line equivalents. Additionally, the “input” option may be omitted in which case the aligner will read data from the standard input. There are some additional options that may be specified in the configuration file, but are not required. “output” is used to specify the path to a file in which the output of the aligner is to be written. Information about the output format is given later in this file. “log” is used to specify the path to a file in which run-time information and statistics are to be written. “expensive_statistics” can be set to “all”, “none”, “POS” or “search” and controls whether certain memory-expensive statistics should be calculated. When not specified, this option defaults to “all”. The statistics in question concern the distribution of POS tags and POS tag-pairs and keeping track of the search-space reductions during alignment.
+
+If you use command line options when running the aligner, or use a configuration file but do not specify the “output” and “log” options, all output is sent to the standard output, including information about the configuration of the aligner at the beginning of the output and some statistics at the end of the output, thus the aligned sentences have to be manually separated from the rest after running the aligner. This behaviour can be changed if you use a configuration file. If you specify only the “output” option, the output of the aligner will be written to the file specified, while the statistics will be written to the standard output. If you, on the other hand, specify only the “log” option, the statistics will be written to the specified file and the output will go to standard output. This mode can be used for piping the output of the aligner into some other tool. In case you specify both options, both the output and the statistics will be written to the corresponding files. Errors are always output to the standard error. The format of the output for the parallel treebank is “<source>\n<target>\n<source_node_id> <target_node_id> … \n\n”. The non-terminal nodes in the parsed trees all have IDs attached with a “-” character. These IDs are used to represent the links between the nodes of the trees. The bracketed structures in the output use minimal amount of white-space.
+
+If you compile the ‘lattice’ tool, it will use the exact same options as the tree-to-tree aligner and will produce output in the same format. The most significant difference is that it will use a full-search algorithm for the induction of the sub-tree alignments, rather than a greedy-search based algorithm. This tool is still experimental, though, and due to the nature of the full-search algorithm may not find a solution for all sentence pairs within an acceptable timeframe. Because of this the use of this tool is strongly discouraged. It is included here for completeness and for the convenience of the developers.
+The ‘lattice’ tool also doesn’t support the ‘span1’ extension yet and the ‘skip*’ modules are irrelevant to it.
+
+### String-to-String Aligner ###
+Here only the differences between the string-to-string aligner and the tree-to-tree aligner will be listed. Anything not mentioned works exactly as described for the tree-to-tree aligner, i.e. all the compilation options available for the tree-to-tree aligner are also available for the string-to-string aligner.
+
+The aligner should be run with command line arguments. You would normally run it in one of the following two ways:
+	align_str2str <operation_mode> <input_type> <output_type> <source_to_target_lex_probs> <target_to_source_lex_probs> [<source_to_target_phrase_probs>] <input_corpus>
+	align_str2str <config_file>
+
+	<operation_mode>  This argument specifies the mode of operation of the aligner and cannot be omitted. ‘str2str’ will evoke standard string-to-string alignment. In case a parser is available for one of the languages being aligned, the aligner can be set to run in string-to-tree or tree-to-string mode. The parameters for these modes are ‘str2tree’ and ‘tree2str’ respectively. In these cases you have to make sure that the correct side of the corpus contains bracketed representations of parsed sentences. The format of the other side of the corpus is controlled by the <input_type> argument. There is no ‘tree2tree’ operation mode; you should use the standalone tree-to-tree aligner instead, as it will be faster.
+	<input_type>  If you supply POS-tagged sentences, this argument should be ‘tagged’ and for plain sentences this should be ‘plain’. This argument cannot be omitted. For development purposes this argument may be set to ‘parsed’ if the input parallel corpus contains bracketed representations of parsed sentences.
+	<output_type>  This argument is used to select the type of output of the aligner and cannot be omitted. There are three possible options: ‘standard’, ‘parse’ and ‘XML’. The ‘standard’ output has the following format for each sentence pair:
+
+#BOP
+#BOS
+<word1>\t<mother_node_ID>
+<word2>\t<mother_node_ID>
+…
+#<node_ID> <node_label>\t<mother1_node_ID> <mother2_node_ID> …
+…
+#EOS
+#BOS
+…
+#EOS
+#LINKS <source1_node_ID> <target1_node_ID> …
+#EOP
+
+#BOP
+…
+#EOP
+
+	If the ‘mother_node_ID’ of a node is ‘0’, then this node has no ancestors (it is a root node). There may be more than one such node for each sentence. This format preserves enough nodes to represent all possible binary trees for the sentences in the pair that are consistent with the induced links.
+	The ‘parse’ and ‘XML’ output formats, on the other hand, present minimal trees, consisting only of the pre-terminal nodes and the linked nodes for the sentences in each pair. In case there is more than one root node for a particular tree, an extra node with label ‘X’ and ID 100000 is inserted as the mother of all root nodes. Both formats give a standard bracketed representation of parse trees. There are no ambiguities in these formats.
+	…
+	<input_corpus>  The information for the tree-to-tree aligner applies here if you are using a parsed corpus as input. If you are using a plain text corpus, there are two possible formats for the sentences, while the overall file format remains as for the tree-to-tree aligner. The first format is simply “<word1> <word2> … <wordn>”. The second format is “((<word1>)) ((<word2>)) … ((<wordn>))” and can be used to specify the boundaries of multiword units. This second format can also be used for supplying POS tags for the words of the sentences. In that case the format is “((<word1> <POS1>)) ((<word2> <POS2>)) … ((<wordn> <POSn>))”. A specific requirement for the use of the string-to-string aligner is the existance of one of two open source modules on your system: If you are using the first input format, you need the Boost Tokenizer library; If you are using the second input format, you need the Boost Regex library.
+	<config_file>  The path to a file containing run-time options, one option per line. The same rules apply as for the config file for the tree-to-tree aligner. There are three additional options, however: “operation_mode”, “input_type” and “output_type”. They correspond directly to their command-line counterparts.
+
+The general information about the output remains as for the tree-to-tree aligner. It should be noted, however, that some of the reported statistics might not be correct.
+
+### Additional tools included in the distribution ###
+Two additoinal tools can also be compiled and installed in addition to the aligner.
+
+1. Chunk Extraction from a Parallel Treebank
+This tool is installed as ‘extract_chunks’
+The tool uses as its input the output produced by the aligner. The output has the following format:
+
+SENT_ID<zero_based_sentence_id>
+<source_chunk> ||| <target_chunk> ||| <occurence_count>
+…
+SENT_ID<zero_based_sentence_id>
+…
+
+If you want to extract lowercased chunks, you have to supply the ‘--enable-lowercase’ option to configure. Otherwise, the letter case will be preserved.
+
+Run the tool like this:
+	extract_chunks [input]
+
+2. Sentence Extraction from a Treebank
+This tool is installed as ‘print_sentences’
+The input to this tool is a simple treebank file with one tree in bracketed format per line. The output is written to standard output and contains one sentence per line.
+Run the tool like this:
+	print_sentences [input]
+	
+This tool uses the same robust algorithm for parsing bracketed structures that the aligner does, so it can handle any character in both non-terminal and terminal nodes, as well as multi word terminals.
+In the future this tool may be extended to output setences in the format required by the string-to-string aligner with or without POS tags.
+
+
+
+Developed by Венцислав Жечев (Ventsislav Zhechev) as part of the ATTEMPT project with funding from Science Foundation Ireland (grant number 05/RF/CMS064).
+National Centre for Language Technology, Dublin City University
+Dublin, Ireland
+
+e-mail: contact@ventsislavzhechev.eu
+web: http://ventsislavzhechev.eu
+
+Released under the GPL. See COPYING for information on copyright and distribution.
+
+Detailed description of the aligner can be found in the following publication:
+Zhechev, Ventsislav and Andy Way. 2008. Automatic Generation of Parallel Treebanks. In Proceedings of the 22nd International Conference on Computational Linguistics (CoLing ’08), pp. 1105–1112. Manchester, UK.
+
+You can keep up-to-date with new versions and updates to the software by subscribing to the following RSS feed:
+http://ventsislavzhechev.eu/Home/Software/rss.xml
+
+Please, submit any bugs you encounter with a short description on how to reproduce them to bugs@ventsislavzhechev.eu

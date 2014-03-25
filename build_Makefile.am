@@ -1,0 +1,88 @@
+## Makefile.am -- Process this file with automake to produce Makefile.in
+#  Created by Венцислав Жечев on 08.11.07.
+#  Copyright 2007 Венцислав Жечев.
+#  Released under the GPL. See COPYING for information.
+##
+
+vpath %.pch ../src/pch
+vpath %.cpp ../src
+vpath %.h   ../src
+
+
+dist_pkgdata_DATA = ../src/umlauts.txt
+CLEANFILES = *.gch
+bin_PROGRAMS =
+
+AM_CXXFLAGS = -include prefix.pch
+AM_CPPFLAGS = -DDATA_DIR="\"$(pkgdatadir)\""
+CXXLINK = @CXX@ $(AM_LDFLAGS) @LDFLAGS@ -o $@
+CXXCOMPILE = @CXX_SOURCE@ $(DEFS) $(AM_CPPFLAGS) @CPPFLAGS@ $(AM_CXXFLAGS) @CXXFLAGS@
+
+EXTRA_DIST = ../src/pch/prefix.pch
+
+prefix.pch.gch: prefix.pch config.h
+	@CXX_HEADER@ $(DEFS) -include ../src/config.h @CXXFLAGS@ $(AM_CPPFLAGS) @CPPFLAGS@ -c ../src/$< -o $@
+
+if BUILD_ALIGN
+  bin_PROGRAMS += align
+  align_SOURCES = ../src/main.cpp ../src/Tree.cpp ../src/Tree.h ../src/TreePair.cpp ../src/TreePair.h ../src/Node.h ../src/Terminal.cpp ../src/Terminal.h ../src/NonTerminal.cpp ../src/NonTerminal.h ../src/Index.h ../src/LinkHypothesis.cpp ../src/LinkHypothesis.h ../src/ProbabilityType.cpp ../src/ProbabilityType.h ../src/lib.cpp ../src/lib.h
+
+main.$(OBJEXT) Tree.$(OBJEXT) TreePair.$(OBJEXT) Terminal.$(OBJEXT) NonTerminal.$(OBJEXT) LinkHypothesis.$(OBJEXT) ProbabilityType.$(OBJEXT) lib.$(OBJEXT): prefix.pch.gch
+endif
+
+if BUILD_STR2STR
+  bin_PROGRAMS += align_str2str
+  align_str2str_SOURCES = ../src/main.multi.cpp ../src/Tree.cpp ../src/Tree.h ../src/MultiTree.cpp ../src/MultiTree.h ../src/TreePair.cpp ../src/TreePair.h ../src/MultiTreePair.cpp ../src/MultiTreePair.h ../src/Node.h ../src/Terminal.cpp ../src/Terminal.h ../src/NonTerminal.cpp ../src/NonTerminal.h ../src/MultiNonTerminal.h ../src/Index.h ../src/LinkHypothesis.cpp ../src/LinkHypothesis.h ../src/ProbabilityType.cpp ../src/ProbabilityType.h ../src/lib.cpp ../src/lib.h
+
+main.multi.$(OBJEXT) Tree.$(OBJEXT) MultiTree.$(OBJEXT) TreePair.$(OBJEXT) MultiTreePair.$(OBJEXT) Terminal.$(OBJEXT) NonTerminal.$(OBJEXT) LinkHypothesis.$(OBJEXT) ProbabilityType.$(OBJEXT) lib.$(OBJEXT): prefix.pch.gch
+endif
+
+if BUILD_ALIGN_LATTICE
+  bin_PROGRAMS += align_lattice
+  align_lattice_SOURCES = ../src/Tree.cpp ../src/Tree.h ../src/Node.h ../src/Terminal.cpp ../src/Terminal.h ../src/NonTerminal.cpp ../src/NonTerminal.h ../src/Index.h ../src/LinkHypothesis.cpp ../src/LinkHypothesis.h ../src/ProbabilityType.cpp ../src/ProbabilityType.h ../src/lib.cpp ../src/lib.h
+  align_lattice_LDADD = main.lattice.$(OBJEXT) TreePair.lattice.$(OBJEXT)
+
+  main.lattice.$(OBJEXT): main.cpp
+	$(CXXCOMPILE) -DLATTICE -c $< -o $@
+  TreePair.lattice.$(OBJEXT): TreePair.cpp TreePair.h
+	$(CXXCOMPILE) -DLATTICE -c $< -o $@
+
+main.lattice.$(OBJEXT) Tree.$(OBJEXT) TreePair.lattice.$(OBJEXT) Terminal.$(OBJEXT) NonTerminal.$(OBJEXT) LinkHypothesis.$(OBJEXT) ProbabilityType.$(OBJEXT) lib.$(OBJEXT): prefix.pch.gch
+endif
+
+if BUILD_CHUNK
+  bin_PROGRAMS += extract_chunks
+  extract_chunks_SOURCES = ../src/Tree.cpp ../src/Tree.h ../src/Node.h ../src/Terminal.cpp ../src/Terminal.h ../src/NonTerminal.cpp ../src/NonTerminal.h ../src/Index.h ../src/LinkHypothesis.cpp ../src/LinkHypothesis.h ../src/lib.cpp ../src/lib.h ../src/ProbabilityType.cpp ../src/ProbabilityType.h
+  extract_chunks_LDADD = main.chunks.$(OBJEXT) TreePair.chunks.$(OBJEXT)
+
+  main.chunks.$(OBJEXT): main.statistics.cpp
+	$(CXXCOMPILE) -DEXTRACT_CHUNKS -c $< -o $@
+  TreePair.chunks.$(OBJEXT): TreePair.cpp TreePair.h
+	$(CXXCOMPILE) -DEXTRACT_CHUNKS -c $< -o $@
+
+main.chunks.$(OBJEXT) Tree.$(OBJEXT) TreePair.chunks.$(OBJEXT) Terminal.$(OBJEXT) NonTerminal.$(OBJEXT) LinkHypothesis.$(OBJEXT) ProbabilityType.$(OBJEXT) lib.$(OBJEXT): prefix.pch.gch
+endif
+
+if BUILD_PRINT
+  bin_PROGRAMS += print_sentences
+  print_sentences_SOURCES = ../src/main.print_sentences.cpp ../src/Node.h ../src/Terminal.cpp ../src/Terminal.h ../src/NonTerminal.cpp ../src/NonTerminal.h ../src/Index.h ../src/lib.cpp ../src/lib.h
+  print_sentences_LDADD = Tree.print_sentences.$(OBJEXT)
+
+  Tree.print_sentences.$(OBJEXT): Tree.cpp Tree.h
+	$(CXXCOMPILE) -DEVALUATE -c $< -o $@
+
+main.print_sentences.$(OBJEXT) Tree.print_sentences.$(OBJEXT) Terminal.$(OBJEXT) NonTerminal.$(OBJEXT) lib.$(OBJEXT): prefix.pch.gch
+endif
+
+if BUILD_EXTRACT_DOT
+  bin_PROGRAMS += extract_dot
+  extract_dot_SOURCES = ../src/main.extract_DOT_grammar.cpp ../src/Node.h ../src/Terminal.cpp ../src/Terminal.h ../src/NonTerminal.cpp ../src/NonTerminal.h ../src/Index.h ../src/Tree.cpp ../src/Tree.h ../src/DOTTreePair.cpp ../src/DOTTreePair.h ../src/LinkHypothesis.cpp ../src/LinkHypothesis.h ../src/ProbabilityType.cpp ../src/ProbabilityType.h ../src/lib.cpp ../src/lib.h
+  extract_dot_LDADD = TreePair.extract_dot.$(OBJEXT) DOPTree.extract_dot.$(OBJEXT)
+
+  TreePair.extract_dot.$(OBJEXT): TreePair.cpp TreePair.h
+	$(CXXCOMPILE) -DDOT_EXTRACTION -c $< -o $@
+  DOPTree.extract_dot.$(OBJEXT): DOPTree.cpp DOPTree.h
+	$(CXXCOMPILE) -DDOT_EXTRACTION -c $< -o $@
+
+main.extract_DOT_grammar.$(OBJEXT) TreePair.extract_dot.$(OBJEXT) DOPTree.extract_dot.$(OBJEXT) Terminal.$(OBJEXT) NonTerminal.$(OBJEXT) Tree.$(OBJEXT) DOTTreePair.$(OBJEXT) LinkHypothesis.$(OBJEXT) ProbabilityType.$(OBJEXT) lib.$(OBJEXT): prefix.pch.gch
+endif

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SchemeUserState</key>
+	<dict>
+		<key>DOP Grammar extraction.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>4</integer>
+		</dict>
+		<key>DOT Grammar extraction.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>7</integer>
+		</dict>
+		<key>Evaluate Aligner.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>3</integer>
+		</dict>
+		<key>Extract Chunks.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
+		<key>Extract SAMT Rules.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>12</integer>
+		</dict>
+		<key>Gather Statistics.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
+		<key>Integerise DOP grammar.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>8</integer>
+		</dict>
+		<key>Print Tagged Sentences.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>6</integer>
+		</dict>
+		<key>Test.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>5</integer>
+		</dict>
+		<key>TreeTester.str2str.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>0</integer>
+		</dict>
+		<key>TreeTester.training (deprecated).xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>10</integer>
+		</dict>
+		<key>TreeTester.tree2tree.lattice.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>9</integer>
+		</dict>
+		<key>TreeTester.tree2tree.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>11</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>8DD76F620486A84900D96B5E</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A91C79090BE73E5E006B30B2</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A92901160C12153400A5B0D8</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A93E722A0D1F7759006A9FE4</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A9688A180C13B8D600AA3169</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A9859C780BC8EDE6004E1AA5</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A9989DAC0BCABDC7005AA9D8</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A998C2BE0BCD46170072D495</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A998C30C0BCD6B8C0072D495</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A99F2F9B0CDF41E20096A7FD</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A9AA25600D0A2AD100E7BF44</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A9AA26F20D0B3A2400E7BF44</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A9F243C40F31E31C00D19C49</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+	</dict>
+</dict>
+</plist>

@@ -1,0 +1,675 @@
+#                                               -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
+# Created by Венцислав Жечев on 07.11.07.
+# Copyright 2007 Венцислав Жечев.
+# Released under the GPL. See COPYING for information.
+#
+
+AC_PREREQ(2.60)
+AC_INIT([Sub-Tree Aligner], [v2.8], [ventzislav.zhetchev@sarrio.every1.net])
+AM_INIT_AUTOMAKE([-Wall -Werror foreign])
+AC_CONFIG_SRCDIR([../src/Node.h])
+AC_CONFIG_HEADERS([../src/config.h])
+
+# Checks for programs.
+AC_PROG_CXX
+AC_LANG(C++)
+AS_IF([test "x$GXX" != xyes],
+  [AC_MSG_FAILURE([You need a GNU C++ compiler for this project!])])
+
+# Checks for typedefs, structures, and compiler characteristics.
+
+AC_ARG_ENABLE([tools],
+  [AS_HELP_STRING([--enable-tools="<tool1> <tool2> …"],
+    [Select which tools are to be compiled. Use “all” to compile all tools. The available options are: “align” standard tree-to-tree alinger; “lattice” latice-based non-greedy tree-to-tree aligner (experimental); “str2str” string-to-string aligner based on the tree-to-tree aligner; “chunk” chunk extractor for parallel treebanks; “print” sentence extractor for treebanks. [align]])],
+  [],
+  [enable_tools=align])
+AS_IF([test "x$enable_tools" = xall],
+ [BUILD_TOOLS=" align str2str align_lattice chunk print"
+	BUILD_ALIGN=1
+	BUILD_STR2STR=1
+	BUILD_ALIGN_LATTICE=1
+	BUILD_CHUNK=1
+	BUILD_PRINT=1
+	BUILD_EXTRACT_DOT=1
+ ],
+ [case "x$enable_tools" in
+		x*align*) BUILD_TOOLS="$BUILD_TOOLS align" ; BUILD_ALIGN=1 ;; esac
+	case "x$enable_tools" in
+		x*str2str*) BUILD_TOOLS="$BUILD_TOOLS str2str" ; BUILD_STR2STR=1 ;; esac
+	case "x$enable_tools" in
+		x*lattice*) BUILD_TOOLS="$BUILD_TOOLS lattice" ; BUILD_ALIGN_LATTICE=1 ;; esac
+	case "x$enable_tools" in
+		x*chunk*) BUILD_TOOLS="$BUILD_TOOLS chunk" ; BUILD_CHUNK=1 ;; esac
+	case "x$enable_tools" in
+		x*print*) BUILD_TOOLS="$BUILD_TOOLS print" ; BUILD_PRINT=1 ;; esac
+	case "x$enable_tools" in
+		x*extract_dot*) BUILD_TOOLS="$BUILD_TOOLS extract_dot" ; BUILD_EXTRACT_DOT=1 ;; esac
+ ])
+AM_CONDITIONAL(BUILD_ALIGN, [test "x$BUILD_ALIGN" = x1])
+AM_CONDITIONAL(BUILD_STR2STR, [test "x$BUILD_STR2STR" = x1])
+AM_CONDITIONAL(BUILD_ALIGN_LATTICE, [test "x$BUILD_ALIGN_LATTICE" = x1])
+AM_CONDITIONAL(BUILD_CHUNK, [test "x$BUILD_CHUNK" = x1])
+AM_CONDITIONAL(BUILD_PRINT, [test "x$BUILD_PRINT" = x1])
+AM_CONDITIONAL(BUILD_EXTRACT_DOT, [test "x$BUILD_EXTRACT_DOT" = x1])
+
+AC_CACHE_SAVE
+
+AS_IF([test "x$BUILD_STR2STR" == x1],
+ [AC_CHECK_HEADER(boost/tokenizer.hpp,
+	 [align_cv_boost_tokenizer_hpp_available=yes],
+	 [align_cv_boost_tokenizer_hpp_available=no])
+	AS_IF([test "x$align_cv_boost_tokenizer_hpp_available" = xyes],
+	 [AC_DEFINE([HAVE_BOOST_TOKENIZER_HPP], [], [Define if boost/tokenizer.hpp exists.])])
+	AC_CHECK_HEADER(boost/regex.hpp,
+	 [align_cv_boost_regex_hpp_available=yes],
+	 [align_cv_boost_regex_hpp_available=no])
+	AS_IF([test "x$align_cv_boost_regex_hpp_available" = xyes],
+	 [AC_DEFINE([HAVE_BOOST_REGEX_HPP], [], [Define if boost/regex.hpp exists.])
+		AC_CHECK_LIB(boost_regex, main,
+		 [align_cv_libboost_regex_usable=yes],
+		 [align_cv_libboost_regex_usable=no])
+		AS_IF([test "x$align_cv_libboost_regex_usable" = xyes],
+		 [AC_DEFINE([HAVE_LIBBOOST_REGEX], [], [Define if libboost_regex is usable.])
+		  LIBS="$LIBS -lboost_regex"
+		 ])
+	 ])
+	AS_IF([test "x$align_cv_boost_tokenizer_hpp_available" != xyes && test "x$align_cv_libboost_regex_usable" != xyes],
+	 [AC_ERROR([You need at least one of boost/tokenizer.hpp and boost/regex.hpp in order to use the string-to-string aligner! Stopped.])
+	 ])
+ ])
+
+
+AC_CANONICAL_BUILD
+AC_CACHE_CHECK([whether we are building for MacOSX], [align_cv_macosx_true], [
+ case x$build_os in
+  xdarwin*)
+		align_cv_macosx_true=yes
+    ;;
+  x*)
+		align_cv_macosx_true="no, compiling on $build_os"
+    ;;
+ esac
+])
+AS_IF([test "x$align_cv_macosx_true" = xyes],
+ [MACOSX=yes
+	AC_DEFINE([MACOSX], [],
+		[This option should be defined if compiling on MacOSX, due to its broken locale support.])
+])
+
+
+AC_ARG_ENABLE([long-double],
+  [AS_HELP_STRING([--enable-long-double],
+    [Enable the use of long doubles if you need this level of precision at the expense of larger memory needs. [disabled]])],
+  [],
+  [enable_long_double=no])
+AS_IF([test "x$enable_long_double" != xno], [
+  AC_TYPE_LONG_DOUBLE_WIDER
+  AS_IF([test "x$enable_long_double" = xyes], [
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+      #ifndef HAVE_LONG_DOUBLE_WIDER
+      bla
+      #endif
+     ]])],
+     [], [AC_MSG_WARN([long double was requested, but it cannot be used or does not add precision! long double will not be used!])])
+   ])
+ ])
+
+AC_ARG_ENABLE([unsigned-long-long],
+  [AS_HELP_STRING([--enable-unsigned-long-long],
+    [Enables the use of unsigned long long ints. You usually don’t need integers of this size for the reliable operation of the aligner. [disabled]])],
+  [],
+  [enable_unsigned_long_long=no])
+AS_IF([test "x$enable_unsigned_long_long" != xno], [
+  AC_TYPE_UNSIGNED_LONG_LONG_INT
+  AS_IF([test "x$enable_unsigned_long_long" = xyes], [
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+      #ifndef HAVE_UNSIGNED_LONG_LONG_INT
+      bla
+      #endif
+     ]])],
+     [], [AC_MSG_WARN([unsigned long long int was requested, but it cannot be used! unsigned long long int will not be used!])])
+   ])
+ ])
+
+
+AC_ARG_ENABLE([64-bit],
+  [AS_HELP_STRING([--enable-64-bit],
+    [Enable 64 bit compilation. So far 64-bit computations haven’t shown any improvement. [disabled]])],
+  [],
+  [enable_64_bit=no])
+IS_64_BIT=no
+AS_IF([test "x$enable_64_bit" != xno],
+ [save_cxx="$CXX"
+	CXX="$CXX -m64"
+  AC_CACHE_CHECK([whether $save_cxx accepts -m64], [align_cv_cxx_accepts_m64],
+	 [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+     [align_cv_cxx_accepts_m64=yes],
+     [align_cv_cxx_accepts_m64=no])
+	])
+	AS_IF([test "x$align_cv_cxx_accepts_m64" = xyes],
+	 [AC_DEFINE([IS_64_BIT], [],
+		 [Define if you want to use 64-bit computations on a 64-bit system.])
+		IS_64_BIT=yes],
+	 [AS_IF([test "x$enable_64_bit" = xyes],
+	   [AC_MSG_FAILURE([You have requested 64-bit computations on a system that does not support them!])])
+		CXX="$save_cxx"])
+ ])
+
+
+AC_CACHE_CHECK([whether we are using Apple’s GCC], [align_cv_apple_gcc],
+ [case `$CXX --version` in
+		*Apple*) align_cv_apple_gcc=yes ;;
+		*) align_cv_apple_gcc=no ;;
+	esac
+ ])
+ARCH_DEFINED=
+AS_IF([test "x$align_cv_apple_gcc" = xyes],
+ [save_cxx="$CXX"
+  CXX="$CXX -arch $build_cpu"
+	AC_CACHE_CHECK([whether $save_cxx accepts -arch $build_cpu], [align_cv_cxx_accepts_arch],
+	 [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+		 [align_cv_cxx_accepts_arch=yes],
+		 [align_cv_cxx_accepts_arch=no])
+   ])
+	AS_IF([test "x$align_cv_cxx_accepts_arch" = xyes],
+	 [ARCH_DEFINED=yes],
+	 [CXX="$save_cxx"])
+ ])
+
+AS_IF([test "x$ARCH_DEFINED" != xyes], [
+	save_cxx="$CXX"
+	CXX="$CXX -march=native"
+	AC_CACHE_CHECK([whether $save_cxx accepts -march=native], [align_cv_cxx_accepts_march_native],
+	 [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+		 [align_cv_cxx_accepts_march_native=yes],
+		 [align_cv_cxx_accepts_march_native=no])
+	 ])
+	AS_IF([test "x$align_cv_cxx_accepts_march_native" = xno],
+	 [CXX="$save_cxx -march=$build_cpu"
+	  AC_CACHE_CHECK([whether $save_cxx accepts -march=$build_cpu], [align_cv_cxx_accepts_march_build_cpu],
+	   [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+		   [align_cv_cxx_accepts_march_build_cpu=yes],
+			 [align_cv_cxx_accepts_march_build_cpu=no])
+		 ])
+		AS_IF([test "x$align_cv_cxx_accepts_march_build_cpu" = xno],
+		 [CXX="$save_cxx -march=i686"
+			AC_CACHE_CHECK([whether $save_cxx accepts -march=i686], [align_cv_cxx_accepts_march_i686],
+			 [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+				 [align_cv_cxx_accepts_march_i686=yes],
+				 [align_cv_cxx_accepts_march_i686=no])
+			 ])
+			AS_IF([test "x$align_cv_cxx_accepts_march_i686" = xno],
+			 [CXX="$save_cxx -march=i386"
+				AC_CACHE_CHECK([whether $save_cxx accepts -march=i386], [align_cv_cxx_accepts_march_i386],
+				 [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+					 [align_cv_cxx_accepts_march_i386=yes],
+					 [align_cv_cxx_accepts_march_i386=no])
+				 ])
+				AS_IF([test "x$align_cv_cxx_accepts_march_i386" = xno], [CXX="$save_cxx"])
+			 ])
+	   ])
+	 ])
+ ])
+
+
+save_cxx="$CXX"
+CXX="$CXX -mfpmath=sse"
+AC_CACHE_CHECK([whether $save_cxx accepts -mfpmath=sse], [align_cv_cxx_accepts_fpmath_sse],
+ [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+   [align_cv_cxx_accepts_fpmath_sse=yes],
+	 [align_cv_cxx_accepts_fpmath_sse=no])
+ ])
+AS_IF([test "x$align_cv_cxx_accepts_fpmath_sse" = xno], [CXX="$save_cxx"])
+
+save_cxx="$CXX"
+CXX="$CXX -msse3"
+AC_CACHE_CHECK([whether $save_cxx accepts -msse3], [align_cv_cxx_accepts_msse3],
+ [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+	 [align_cv_cxx_accepts_msse3=yes],
+	 [align_cv_cxx_accpets_msse3=no])
+ ])
+AS_IF([test "x$align_cv_cxx_accepts_msse3" = xno],
+ [CXX="$save_cxx -msse2"
+	AC_CACHE_CHECK([whether $save_cxx accepts -msse2], [align_cv_cxx_accepts_msse2],
+   [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+		 [align_cv_cxx_accepts_msse2=yes],
+		 [align_cv_cxx_accepts_msse2=no])
+	])
+	AS_IF([test "x$align_cv_cxx_accepts_msse2" = xno], [CXX="$save_cxx"])
+ ],
+ [save_cxx="$CXX"
+	CXX="$CXX -mssse3"
+	AC_CACHE_CHECK([whether $save_cxx accepts -mssse3], [align_cv_cxx_accepts_mssse3],
+   [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+		 [align_cv_cxx_accepts_mssse3=yes],
+		 [align_cv_cxx_accepts_mssse3=no])
+	])
+	AS_IF([test "x$align_cv_cxx_accepts_mssse3" = xno], [CXX="$save_cxx"])
+ ])
+
+
+AC_ARG_VAR([CXX_SOURCE], [C++ command for compiling C++ source files])
+CXX_SOURCE="$CXX -x c++"
+AC_ARG_VAR([CXX_HEADER], [C++ command for compiling prefix header files])
+CXX_HEADER="$CXX_SOURCE-header"
+
+CXXFLAGS="-pipe -Wno-trigraphs -Wreturn-type -Wnon-virtual-dtor -Woverloaded-virtual -Wformat -Wmissing-braces -Wparentheses -Wunused-function -Wunused-label -Wunused-parameter -Wunused-variable -Wunknown-pragmas -Wsign-compare -Winvalid-pch"
+
+AC_CACHE_SAVE
+
+cxx_save="$CXX"
+CXX="$CXX_SOURCE"
+
+AS_IF([test "x$IS_64_BIT" != xyes ],
+ [save_cxxflags="$CXXFLAGS"
+  CXXFLAGS="$CXXFLAGS -Wshorten-64-to-32"
+	AC_CACHE_CHECK([whether $CXX_SOURCE accepts -Wshorten-64-to-32], [align_cv_cxx_source_accepts_wshorten_64_to_32],
+   [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+	   [align_cv_cxx_source_accepts_wshorten_64_to_32=yes],
+		 [align_cv_cxx_source_accepts_wshorten_64_to_32=no])
+	])
+	AS_IF([test "x$align_cv_cxx_source_accepts_wshorten_64_to_32" = xno], [CXXFLAGS="$save_cxxflags"])
+ ])
+
+AS_IF([test "x$IS_64_BIT" != xyes ],
+ [save_cxxflags="$CXXFLAGS"
+  CXXFLAGS="$CXXFLAGS -mdynamic-no-pic"
+	AC_CACHE_CHECK([whether $CXX_SOURCE accepts -mdynamic-no-pic], [align_cv_cxx_source_accepts_mdynamic_no_pic],
+   [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+	   [align_cv_cxx_source_accepts_mdynamic_no_pic=yes],
+		 [align_cv_cxx_source_accepts_mdynamic_no_pic=no])
+	])
+	AS_IF([test "x$align_cv_cxx_source_accepts_mdynamic_no_pic" = xno], [CXXFLAGS="$save_cxxflags"])
+ ])
+
+save_cxxflags="$CXXFLAGS"
+CXXFLAGS="$CXXFLAGS -O3"
+AC_CACHE_CHECK([whether $CXX_SOURCE supports -O3 optimisation], [align_cv_cxx_source_supports_o3],
+ [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+   [align_cv_cxx_source_supports_o3=yes],
+	 [align_cv_cxx_source_supports_o3=no])
+ ])
+AS_IF([test "x$align_cv_cxx_source_supports_o3" = xno],
+ [CXXFLAGS="$save_cxxflags -O2"
+	AC_CACHE_CHECK([whether $CXX_SOURCE supports -O2 optimisation], [align_cv_cxx_source_supports_o2],
+   [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+		 [align_cv_cxx_source_supports_o2=yes],
+		 [align_cv_cxx_source_supports_o2=no])
+	 ])
+	AS_IF([test "x$align_cv_cxx_source_supports_o2" = xno],
+	 [CXXFLAGS="$save_cxxflags"],
+	 [CXXFLAGS="$CXXFLAGS -Wuninitialized"])
+ ],
+ [CXXFLAGS="$CXXFLAGS -Wuninitialized"
+ ])
+
+#save_cxxflags="$CXXFLAGS"
+#CXXFLAGS="$CXXFLAGS -fno-exceptions"
+#AC_CACHE_CHECK([whether $CXX_SOURCE accepts -fno-exceptions], [align_cv_cxx_source_accepts_fno_exceptions],
+# [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+#	 [align_cv_cxx_source_accepts_fno_exceptions=yes],
+#	 [align_cv_cxx_source_accepts_fno_exceptions=no])
+# ])
+#AS_IF([test "x$align_cv_cxx_source_accepts_fno_exceptions" = xno], [CXXFLAGS="$save_cxxflags"])
+
+save_cxxflags="$CXXFLAGS"
+CXXFLAGS="$CXXFLAGS -fmessage-length=0"
+AC_CACHE_CHECK([whether $CXX_SOURCE accepts -fmessage-length=0], [align_cv_cxx_source_accepts_fmessage_length_0],
+ [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+	 [align_cv_cxx_source_accepts_fmessage_length_0=yes],
+	 [align_cv_cxx_source_accepts_fmessage_length_0=no])
+ ])
+AS_IF([test "x$align_cv_cxx_source_accepts_fmessage_length_0" = xno], [CXXFLAGS="$save_cxxflags"])
+
+save_cxxflags="$CXXFLAGS"
+CXXFLAGS="$CXXFLAGS -funroll-loops"
+AC_CACHE_CHECK([whether $CXX_SOURCE accepts -funroll-loops], [align_cv_cxx_source_accepts_funroll_loops],
+ [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+	 [align_cv_cxx_source_accepts_funroll_loops=yes],
+	 [align_cv_cxx_source_accepts_funroll_loops=no])
+ ])
+AS_IF([test "x$align_cv_cxx_source_accepts_funroll_loops" = xno], [CXXFLAGS="$save_cxxflags"])
+
+save_cxxflags="$CXXFLAGS"
+CXXFLAGS="$CXXFLAGS -ffast-math"
+AC_CACHE_CHECK([whether $CXX_SOURCE accepts -ffast-math], [align_cv_cxx_source_accepts_ffast_math],
+ [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+	 [align_cv_cxx_source_accepts_ffast_math=yes],
+	 [align_cv_cxx_source_accepts_ffast_math=no])
+ ])
+AS_IF([test "x$align_cv_cxx_source_accepts_ffast_math" = xno], [CXXFLAGS="$save_cxxflags"])
+
+save_cxxflags="$CXXFLAGS"
+CXXFLAGS="$CXXFLAGS -fstrict-aliasing"
+AC_CACHE_CHECK([whether $CXX_SOURCE accepts -fstrict-aliasing], [align_cv_cxx_source_accepts_fstrict_aliasing],
+ [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+	 [align_cv_cxx_source_accepts_fstrict_aliasing=yes],
+	 [align_cv_cxx_source_accepts_fstrict_aliasing=no])
+ ])
+AS_IF([test "x$align_cv_cxx_source_accepts_fstrict_aliasing" = xno], [CXXFLAGS="$save_cxxflags"])
+
+save_cxxflags="$CXXFLAGS"
+CXXFLAGS="$CXXFLAGS -ftree-vectorize"
+AC_CACHE_CHECK([whether $CXX_SOURCE accepts -ftree-vectorize], [align_cv_cxx_source_accepts_ftree_vectorize],
+ [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+	 [align_cv_cxx_source_accepts_ftree_vectorize=yes],
+	 [align_cv_cxx_source_accepts_ftree_vectorize=no])
+ ])
+AS_IF([test "x$align_cv_cxx_source_accepts_ftree_vectorize" = xno], [CXXFLAGS="$save_cxxflags"])
+
+save_cxxflags="$CXXFLAGS"
+CXXFLAGS="$CXXFLAGS -fvisibility=hidden"
+AC_CACHE_CHECK([whether $CXX_SOURCE accepts -fvisibility=hidden], [align_cv_cxx_source_accepts_fvisibility_hidden],
+ [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+	 [align_cv_cxx_source_accepts_fvisibility_hidden=yes],
+	 [align_cv_cxx_source_accepts_fvisibility_hidden=no])
+ ])
+AS_IF([test "x$align_cv_cxx_source_accepts_fvisibility_hidden" = xno], [CXXFLAGS="$save_cxxflags"])
+
+save_cxxflags="$CXXFLAGS"
+CXXFLAGS="$CXXFLAGS -fvisibility-inlines-hidden"
+AC_CACHE_CHECK([whether $CXX_SOURCE accepts -fvisibility-inlines-hidden], [align_cv_cxx_source_accepts_fvisibility_inlines_hidden],
+ [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+	 [align_cv_cxx_source_accepts_fvisibility_inlines_hidden=yes],
+	 [align_cv_cxx_source_accepts_fvisibility_inlines_hidden=no])
+ ])
+AS_IF([test "x$align_cv_cxx_source_accepts_fvisibility_inlines_hidden" = xno], [CXXFLAGS="$save_cxxflags"])
+
+save_cxxflags="$CXXFLAGS"
+CXXFLAGS="$CXXFLAGS -fno-threadsafe-statics"
+AC_CACHE_CHECK([whether $CXX_SOURCE accepts -fno-threadsafe-statics], [align_cv_cxx_source_accepts_fno_threadsafe_statics],
+ [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+	 [align_cv_cxx_source_accepts_fno_threadsafe_statics=yes],
+	 [align_cv_cxx_source_accepts_fno_threadsafe_statics=no])
+ ])
+AS_IF([test "x$align_cv_cxx_source_accepts_fno_threadsafe_statics" = xno], [CXXFLAGS="$save_cxxflags"])
+
+save_cxxflags="$CXXFLAGS"
+CXXFLAGS="$CXXFLAGS -fno-schedule-insns"
+AC_CACHE_CHECK([whether $CXX_SOURCE accepts -fno-schedule-insns], [align_cv_cxx_source_accepts_fno_schedule_insns],
+ [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+	 [align_cv_cxx_source_accepts_fno_schedule_insns=yes],
+	 [align_cv_cxx_source_accepts_fno_schedule_insns=no])
+ ])
+AS_IF([test "x$align_cv_cxx_source_accepts_fno_schedule_insns" = xno], [CXXFLAGS="$save_cxxflags"])
+
+save_cxxflags="$CXXFLAGS"
+CXXFLAGS="$CXXFLAGS -fno-schedule-insns2"
+AC_CACHE_CHECK([whether $CXX_SOURCE accepts -fno-schedule-insns2], [align_cv_cxx_source_accepts_fno_schedule_insns2],
+ [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+	 [align_cv_cxx_source_accepts_fno_schedule_insns2=yes],
+	 [align_cv_cxx_source_accepts_fno_schedule_insns2=no])
+ ])
+AS_IF([test "x$align_cv_cxx_source_accepts_fno_schedule_insns2" = xno], [CXXFLAGS="$save_cxxflags"])
+
+save_cxxflags="$CXXFLAGS"
+CXXFLAGS="$CXXFLAGS -falign-loops=16"
+AC_CACHE_CHECK([whether $CXX_SOURCE accepts -falign-loops=16], [align_cv_cxx_source_accepts_falign_loops_16],
+ [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+	 [align_cv_cxx_source_accepts_falign_loops_16=yes],
+	 [align_cv_cxx_source_accepts_falign_loops_16=no])
+ ])
+AS_IF([test "x$align_cv_cxx_source_accepts_falign_loops_16" = xno], [CXXFLAGS="$save_cxxflags"])
+
+AC_ARG_ENABLE([parallel],
+ [AS_HELP_STRING([--enable-parallel],
+	 [Enable parallelisation. Works only with GCC 4.2 and later and is only useful on a multi-CPU machine. [disabled]])
+ ],
+ [],
+ [enable_parallel=no])
+AS_IF([test "x$enable_parallel" != xno],
+ [save_cxxflags="$CXXFLAGS"
+	CXXFLAGS="$CXXFLAGS -fopenmp"
+	AC_CACHE_CHECK([whether $CXX_SOURCE accepts -fopenmp], [align_cv_cxx_source_accepts_fopenmp],
+	 [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+		 [align_cv_cxx_source_accepts_fopenmp=yes],
+		 [align_cv_cxx_source_accepts_fopenmp=no])
+	 ])
+	AS_IF([test "x$align_cv_cxx_source_accepts_fopenmp" = xno],
+	 [CXXFLAGS="$save_cxxflags"
+		AC_MSG_WARN([Parallelisation was requested, but is not available on this system! The software will run in serial mode.])
+	 ],
+	 [LDFLAGS="$LDFLAGS -lgomp"])
+ ])
+
+CXX="$cxx_save"
+
+
+AS_IF([test "x$IS_64_BIT" != xyes ],
+ [save_ldflags="$LDFLAGS"
+  LDFLAGS="$save_ldflags -Wl,-x"
+	AC_CACHE_CHECK([whether $CXX accepts -Wl,-x], [align_cv_cxx_accepts_wl_x],
+	 [AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
+		 [align_cv_cxx_accepts_wl_x=yes],
+		 [align_cv_cxx_accepts_wl_x=no
+		 ])
+	 ])
+	AS_IF([test "x$align_cv_cxx_accepts_wl_x" = xno], [LDFLAGS="$save_ldflags"])
+
+	AS_IF([test "x$MACOSX" = xyes],
+	 [save_ldflags="$LDFLAGS"
+		LDFLAGS="$LDFLAGS -Wl,-dead_strip"
+		AC_CACHE_CHECK([whether $CXX accepts -Wl,-dead_strip], [align_cv_cxx_accepts_wl_dead_strip],
+		 [AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
+			 [align_cv_cxx_accepts_wl_dead_strip=yes],
+			 [align_cv_cxx_accepts_wl_dead_strip=no
+			 ])
+		 ])
+		AS_IF([test "x$align_cv_cxx_accepts_wl_dead_strip" = xno], [LDFLAGS="$save_ldflags"])
+	 ])
+ ])
+
+save_ldflags="$LDFLAGS"
+LDFLAGS="$LDFLAGS -Wl,-Sp"
+AC_CACHE_CHECK([whether $CXX accepts -Wl,-Sp], [align_cv_cxx_accepts_wl_sp],
+ [AC_LINK_IFELSE([AC_LANG_PROGRAM([])],
+	 [align_cv_cxx_accepts_wl_sp=yes],
+	 [align_cv_cxx_accepts_wl_sp=no])
+ ])
+AS_IF([test "x$align_cv_cxx_accepts_wl_sp" = xno], [LDFLAGS="$save_ldflags"])
+
+AC_CACHE_SAVE
+
+
+AC_CACHE_CHECK([for the type of wstring::npos], [align_cv_wstring_npos_type],
+ [wstring_npos_type=
+	type_limits=
+	save_cxxflags="$CXXFLAGS"
+	CXXFLAGS="-Wtype-limits"
+	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])], [type_limits=yes])
+  AS_IF([test "x$type_limits" = xyes],
+   [CXXFLAGS="-Wsign-compare -Werror -Wno-type-limits"],
+	 [CXXFLAGS="-Wsign-compare -Werror"])
+	AC_COMPILE_IFELSE(
+	 [AC_LANG_PROGRAM(
+		 [[
+#include <string>
+using namespace std;
+typedef int test_type;
+     ]],
+     [[
+  test_type i = 0;
+  if (i == wstring::npos)
+    ;
+     ]])
+	 ],
+   [],
+   [wstring_npos_type=unsigned])
+  AS_IF([test "x$type_limits" = xyes],
+	 [CXXFLAGS="-Wno-sign-compare -Werror -Wtype-limits"],
+	 [CXXFLAGS="-Wno-sign-compare -Werror"])
+  AC_COMPILE_IFELSE(
+   [AC_LANG_PROGRAM(
+     [[
+#include <string>
+using namespace std;
+typedef $wstring_npos_type int test_type;
+     ]],
+     [[
+  test_type i = 0;
+  if (i == wstring::npos)
+    ;
+     ]])
+	 ],
+   [],
+   [wstring_npos_type="$wstring_npos_type long"
+	 ])
+	align_cv_wstring_npos_type="$wstring_npos_type int"
+	CXXFLAGS="$save_cxxflags"
+ ])
+AC_DEFINE_UNQUOTED([STR_POS_TYPE], [$align_cv_wstring_npos_type], [Defines the type to use for string positions.])
+
+AC_ARG_ENABLE([lowercasing],
+  [AS_HELP_STRING([--enable-lowercasing],
+    [The result of this option depends on the tool you are compiling. Check the README file for exact information. [disabled]])],
+  [],
+  [enable_lowercasing=no])
+AS_IF([test "x$enable_lowercasing" != xno],
+  [AC_DEFINE([LOWERCASE], [],
+    [The result of this option depends on the tool you are compiling. Check the README file for exact information.])])
+
+AC_ARG_ENABLE([span1],
+  [AS_HELP_STRING([--disable-span1],
+    [Disable the ‘span1’ aligner feature. [enabled]])],
+  [],
+  [enable_span1=yes])
+AS_IF([test "x$enable_span1" = xyes],
+    [AC_DEFINE([VERSION], ["0.8a"],
+				[This option has several possible values, the relevant being “0.7” and “0.8a”. “0.8a” means configuring the aligner with the _span1_ feature, while “0.7” would produce an aligner without the feature.])],
+  [test "x$enable_span1" = xno],
+    [AC_DEFINE([VERSION], ["0.7"],
+      [This option has several possible values, the relevant being “0.7” and “0.8a”. “0.8a” means configuring the aligner with the _span1_ feature, while “0.7” would produce an aligner without the feature.])],
+  [AC_MSG_FAILURE([Unexpected option value.])])
+
+AC_ARG_ENABLE([score],
+  [AS_HELP_STRING([--enable-score],
+    [Choose the scoring mechanism. (available options: 1, 2) [2]])],
+  [],
+  [enable_score=2])
+AS_IF([test "x$enable_score" = x1],
+    [],
+  [test "x$enable_score" = x2],
+    [AC_DEFINE([NEW_PROBS], [],
+      [If this option is defined, the aligner will use the _score2_ scoring function rather than _score1_.])],
+  [AC_MSG_FAILURE([Unexpected option value (available options: 1, 2).])])
+
+AC_ARG_ENABLE([skip],
+  [AS_HELP_STRING([--enable-skip],
+    [Choose the selection algorithm. (available options: 1, 2) [2]])],
+  [],
+  [enable_skip=2])
+AS_IF([test "x$enable_skip" = x1],
+    [],
+  [test "x$enable_skip" = x2],
+    [AC_DEFINE([DELAY_CONSTITUENT], [],
+      [If this option is defined, the aligner will use the _skip2_ selection algorithm, rather than _skip1_.])],
+  [AC_MSG_FAILURE([Unexpected option value (available options: 1, 2).])])
+
+AC_ARG_ENABLE([rescoring],
+  [AS_HELP_STRING([--enable-rescoring],
+	  [Enable the rescoring algorithm. [disabled]])],
+	[],
+	[enable_rescoring=no])
+AS_IF([test "x$enable_rescoring" != xno],
+  [AC_DEFINE([RESCORE], [],
+	  [This option turns on the rescoring algorithm.])])
+
+AC_ARG_ENABLE([simple-scores],
+  [AS_HELP_STRING([--enable-simple-scores],
+    [Calculate the scores based only on the internal probabilities. [IGNORED]])],
+  [enable_simple_scores=no],
+  [enable_simple_scores=no])
+AS_IF([test "x$enable_simple_scores" != xno],
+  [AC_DEFINE([SIMPLE_PROBS], [],
+    [Turning on this option will produce an aligner that calculates the scores based only on the internal probabilities.])])
+
+AC_ARG_ENABLE([data-set],
+  [AS_HELP_STRING([--enable-data-set=<data_set_name>],
+    [Supply the name of data-set set you will be working with. If you are using the HomeCentre corpus you must use "--enable-data-set=HomeCentre" for correct processing. ["unknown"]])],
+  [],
+  [enable_data_set=unknown])
+AC_DEFINE_UNQUOTED([DATA_SET], ["$enable_data_set"],
+  [Because the nodes in the HomeCentre corpus are already numbered, it has to be handled differently to other corpora. This is controlled by the DATA_SET option. If the aligner will be used for the HomeCentre corpus, it should be set to "HomeCentre". Otherwise the option should be set to a different string, which may describe the data set it will operate on.])
+	
+AC_ARG_ENABLE([log-based-probabilities],
+  [AS_HELP_STRING([--disable-log-based-probabilities],
+    [Define this if you do not want to use logs to store probabilities. Logs give a slight reduction in execution time, but the results are slightly different from the results that you get when storing the probabilities in a conventional way. [enabled]])],
+  [],
+  [enable_log_based_probabilities=yes])
+AS_IF([test "x$enable_log_based_probabilities" != xno],
+  [AC_DEFINE([SEP_PROB_TYPE], [],
+    [Define this if you want to use logs to store probabilities.])])
+
+# Checks for library functions.
+AS_IF([test "x$MACOSX" != xyes],
+ [AC_CHECK_HEADERS([locale])
+	AC_CACHE_CHECK([whether locale can be set], [align_cv_locale_settable],
+	 [AC_RUN_IFELSE(
+		 [AC_LANG_PROGRAM(
+			 [[
+#ifdef HAVE_LOCALE
+#include <locale>
+#else
+#define ERROR
+#endif
+using namespace std;
+			 ]],
+			 [[
+#ifdef ERROR
+return 1;
+#endif
+locale::global(locale("en_US.UTF-8"));
+			 ]])
+		 ],
+		 [align_cv_locale_settable=yes],
+		 [align_cv_locale_settable=no])
+   ])
+	AS_IF([test "x$align_cv_locale_settable" = xno],
+	[AC_DEFINE([MACOSX], [],
+    [This option should be defined if compiling on MacOSX, due to its broken locale support.])
+  ])
+ ])
+
+AC_DEFINE([BIN_CONNECT], [L"%"], [Character to use for connecting a node with its binarisation index during printout.])
+AC_DEFINE([GDM_CONNECT], [L"+"], [Character to use for connecting a node with its Goodman index during printout.])
+AC_DEFINE([LNK_CONNECT], [L"="], [Character to use for connecting a node with its linked node during printout.])
+
+
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT
+
+AC_MSG_NOTICE([])
+AC_MSG_NOTICE([The tools to be installed are:$BUILD_TOOLS])
+AC_MSG_NOTICE([[##### General Options #####]])
+AS_IF([test "x$enable_parallel" != xno],
+	AC_MSG_NOTICE([Compiling for parallel execution.]),
+	AC_MSG_NOTICE([Compiling for serial execution.]))
+AS_IF([test "x$BUILD_ALIGN" = x1 || test "x$BUILD_STR2STR" = x1 || test "x$BUILD_ALIGN_LATTICE" = x1],
+ [
+	AC_MSG_NOTICE([[###### Align Options ######]])
+	AS_IF([test "x$enable_data_set" = x],
+		AC_MSG_NOTICE([Empty data set!]),
+		AC_MSG_NOTICE([Using data set “$enable_data_set”.]))
+	AS_IF([test "x$enable_lowercasing" = xyes],
+		AC_MSG_NOTICE([Using lowercased word alignment data.]),
+	AC_MSG_NOTICE([Using standard case word alignment data.]))
+	AS_IF([test "x$enable_simple_scores" = xyes],
+		AC_MSG_NOTICE([Using simplified score calculation.]),
+		AC_MSG_NOTICE([Using standard score calculation.]))
+	AS_IF([test "x$enable_log_based_probabilities" = xyes],
+		AC_MSG_NOTICE([Using logarithms to store probabilities.]))
+	configuration=skip"$enable_skip"_score"$enable_score"
+	AS_IF([test "x$enable_span1" = xyes],
+		configuration="$configuration"_span1)
+	AC_MSG_NOTICE([Setup ready for aligner configuration “$configuration”.])
+ ])
+AS_IF([test "x$BUILD_CHUNK" = x1],
+ [
+	AC_MSG_NOTICE([[## Chunk Extract Options ##]])
+	AS_IF([test "x$enable_lowercasing" = xyes],
+		AC_MSG_NOTICE([Producing lowercased chunks.]),
+		AC_MSG_NOTICE([Producing standard case chunks.]))
+ ])
+AC_MSG_NOTICE([[###########################]])
+AC_MSG_NOTICE([Now run “make && make install” (or “make -j <num_jobs> && make install”) to compile and install the aligner.])

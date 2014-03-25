@@ -1,0 +1,33 @@
+/*
+ *  prefix.integerise.pch
+ *  TreeTester
+ *
+ *  Created by Венцислав Жечев on 04.06.07.
+ *  Copyright 2007 Венцислав Жечев.
+ *  Released under the GPL. See COPYING for information.
+ *
+ */
+
+//#include <CHUD/CHUD.h>
+//#include <CoreFoundation/CoreFoundation.h>
+
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <map>
+//#include <locale>
+using namespace std;
+
+namespace bg_zhechev_ventsislav {
+	
+#ifndef DATA_SET
+#define DATA_SET "de-news"
+#endif
+	
+	typedef unsigned long bigNumber;
+	typedef map<wstring, bigNumber> labelReferenceMap;
+	
+	typedef map<string, string> configMapType;
+}
+
+using namespace bg_zhechev_ventsislav;

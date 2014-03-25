@@ -1,0 +1,176 @@
+/*
+ *  prefix.pch
+ *  TreeTester
+ *
+ *  Created by Венцислав Жечев on 04.12.06.
+ *  Copyright 2006 Венцислав Жечев.
+ *  Released under the GPL. See COPYING for information.
+ *
+ */
+
+#ifdef PROFILE
+#include <CHUD/CHUD.h>
+#endif
+
+#include <ctime>
+#include <sys/time.h>
+#include <cassert>
+#include <iostream>
+#include <istream>
+#include <ostream>
+#include <sstream>
+#include <iomanip>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <map>
+#include <set>
+#include <algorithm>
+#include <cmath>
+#include <iterator>
+#include <locale>
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+#ifdef HAVE_LIBBOOST_REGEX
+#include <boost/regex.hpp>
+#endif
+#ifdef HAVE_BOOST_TOKENIZER_HPP
+#include <boost/tokenizer.hpp>
+#endif
+using namespace std;
+
+namespace bg_zhechev_ventsislav {
+	
+#ifndef HAVE_CONFIG_H
+	//0.7 is the basic version; 0.8a turns 'span1' on
+#ifndef VERSION
+#define VERSION "0.8a"
+#endif
+	//The HomeCentre data has to be handled diffrently, so the DATA_SET specifies what you are working with
+#ifndef DATA_SET
+#define DATA_SET "HomeCentre"
+#endif 
+	
+	//binarisation index connect character
+#ifndef BIN_CONNECT
+#define BIN_CONNECT L"%"
+#endif
+	//Goodman number connect character
+#ifndef GDM_CONNECT
+#define GDM_CONNECT L"+"
+#endif
+	//link tag connect character
+#ifndef LNK_CONNECT
+#define LNK_CONNECT L"="
+#endif
+	
+	//Define the type for string positions.
+	//This is important, because the type and value of wstring::npos varies between systems.
+#ifndef STR_POS_TYPE
+#define STR_POS_TYPE unsigned long
+#endif
+#endif //#ifndef HAVE_CONFIG_H
+	
+	extern bool USE_PHRASES;
+	extern const wchar_t* SPACE;
+	extern void toLower(basic_string<wchar_t>& s);
+#ifndef TMMT
+	extern map<wchar_t, wchar_t> substMap;
+#endif
+	
+#ifdef HAVE_UNSIGNED_LONG_LONG_INT
+	typedef unsigned long long int bigNumber;
+#else
+	typedef unsigned long int bigNumber;
+#endif
+#ifdef HAVE_LONG_DOUBLE_WIDER
+	typedef long double doubleType;
+#else
+	typedef double doubleType;
+#endif
+	
+	typedef STR_POS_TYPE str_pos_type;
+	
+	typedef map<wstring, bigNumber> binContextMap;						//a map used for the binarisation contexts
+	typedef map<bigNumber, bigNumber> bigNumMap;							//that's how we store the links for example
+#ifndef OUTPUT_SCORES
+	typedef bigNumMap linksMap;
+#else
+	typedef map<bigNumber, pair<bigNumber, doubleType> > linksMap;
+	//typedef bigNumMap linksMap;
+#endif
+	//typedef map<int, int> intMap;
+	typedef vector<int> intVector;
+	typedef vector<bigNumber> bigNumVector;
+	typedef set<bigNumber> bigNumSet;
+	typedef pair<int, int> addressType;				//type for the address of a node in the parse table (position, span)
+	class Node;
+	typedef map<addressType, Node*> mainChartType;						//type for the main parse table holding the tree
+	class NonTerminal;
+	typedef map<bigNumber, NonTerminal*> nodeIndexMap;				//type for indexing the nodes of a tree by ID
+	
+	typedef pair<wstring, wstring> contextPair;
+	typedef map<contextPair, int> linkContextMap;							//a map holding the contexts for alignments in trees
+	
+	typedef pair<wstring, bigNumber> cellKey;
+	typedef map<cellKey, pair<doubleType, bigNumVector> > daughterContextMap;
+	typedef map<cellKey, pair<doubleType, vector<cellKey> > > cellMap;
+	typedef map<addressType, cellMap> dynAlignmentMap;
+	
+	typedef map<wstring, map<wstring, double> > extAlignmentMap;
+	typedef map<wstring, double> vcbMap;
+	
+	typedef map<bigNumber, wstring> subStringsVector;
+	typedef map<bigNumber, map<bigNumber, doubleType> > lexicalProbabilities;
+	typedef doubleType** newLexicalProbabilities;
+//	typedef map<contextPair, doubleType> insideProbabilityMap;
+	
+	typedef pair<bigNumber, bigNumber> linkAddressPair;
+	struct LinkHypothesis;
+	typedef map<linkAddressPair, LinkHypothesis*> hypothesesMap;
+	//typedef vector<hypothesesMap> hypothesesMapVector;
+	
+	//#define SEP_PROB_TYPE
+#ifdef SEP_PROB_TYPE
+	class ProbabilityType;
+#else
+	typedef doubleType ProbabilityType;
+#endif
+	typedef multimap<ProbabilityType, hypothesesMap::iterator> hypothesesMapProbabilityIndex;
+	typedef multimap<bigNumber, LinkHypothesis*> hypothesesMapElementIndex;
+	typedef map<linkAddressPair, hypothesesMap::iterator> linksIndex;
+	typedef vector<linkAddressPair> linksVector;
+	
+	typedef set<bigNumber> bigNumIndex;
+	typedef pair<bigNumIndex, bigNumIndex> skipStructure;
+	
+	typedef map<wstring, int> tagMap;
+	
+	typedef map<wstring, pair<bigNumber, binContextMap> > PCFGRulesMap;
+	typedef map<wstring, pair<bigNumber, vector<pair<bigNumber, bigNumVector> > > > extRulesMap;
+	typedef set<wstring> wstringSet;
+	
+	class MultiNonTerminal;
+	typedef vector<const MultiNonTerminal*> multiNTVector;
+	
+	typedef map<string, string> configMapType;
+	
+	//#ifdef LATTICE
+	//typedef vector<linkAddressPair*> setOfLinks;
+	class LinkSet;
+	class LinkPowerSetRow;
+	/*typedef vector<LinkPowerSetRow*> linkPowerSet;
+	 typedef multimap<ProbabilityType, const setOfLinks*> vectorOfLinkSets;
+	 typedef map<linkAddressPair, ProbabilityType> linkProbabilitiesMap;*/
+	
+	typedef vector<linkAddressPair> linkStorageVector;
+	typedef linkStorageVector::size_type linkIDType;
+	typedef set<linkIDType> setOfLinks;
+	typedef vector<linkIDType> vectorOfLinks;
+	typedef map<linkIDType, setOfLinks> crossingLinksStorageMap;
+	typedef multimap<doubleType, linkStorageVector> mapOfLinkSets;
+	//#endif //LATTICE
+}
+
+using namespace bg_zhechev_ventsislav;

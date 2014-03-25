@@ -1,0 +1,53 @@
+#!/bin/bash
+if [ "x$1" = xno_reconf ]
+then
+	no_reconf=true
+fi
+
+echo "Input release version: "
+read version
+new_folder=tree_aligner.$version
+if [ -d $new_folder ]
+then
+	echo "Folder $new_folder already exists. Do you want to clear its contents? [Y/N] "
+	read answer
+	if [ $answer == "N" -o $answer == "n" ]
+	then
+		answer=no
+	fi
+else
+	echo "creating folder structure…"
+	mkdir $new_folder
+	mkdir -p $new_folder/src
+	mkdir -p $new_folder/src/pch
+	mkdir -p $new_folder/build
+	answer=no
+fi
+
+if [ "x$answer" != xno ]
+then
+	echo cleaning "$new_folder"…
+	rm -rf $new_folder/*
+	mkdir -p $new_folder/src
+	mkdir -p $new_folder/src/pch
+	mkdir -p $new_folder/build
+fi
+
+echo "copying *.cpp to $new_folder/src…"
+cp -fp TreeTester\ all/*.cpp $new_folder/src/.
+echo "copying *.h to $new_folder/src…"
+cp -fp TreeTester\ all/*.h $new_folder/src/.
+echo "copying *.pch to  to $new_folder/src/pch…"
+cp -fp TreeTester\ all/*.pch $new_folder/src/pch/.
+cp -fpv TreeTester\ all/umlauts.txt $new_folder/src/.
+cp -fpv TreeTester\ all/build_Makefile.am $new_folder/build/Makefile.am
+cp -fpv TreeTester\ all/build_configure.ac $new_folder/build/configure.ac
+cp -fpv TreeTester\ all/COPYING $new_folder/.
+cp -fpv TreeTester\ all/GPL $new_folder/.
+cp -fpv TreeTester\ all/README $new_folder/.
+if [ "x$no_reconf" != xtrue ]
+then
+	cd $new_folder/build
+	autoreconf -vis
+	cd ../..
+fi

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Scheme
+   LastUpgradeVersion = "0510"
+   version = "1.8">
+   <BuildAction
+      parallelizeBuildables = "YES"
+      buildImplicitDependencies = "YES">
+      <BuildActionEntries>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A998C30C0BCD6B8C0072D495"
+               BuildableName = "aligner_statistics"
+               BlueprintName = "Gather Statistics"
+               ReferencedContainer = "container:TreeTester.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+      </BuildActionEntries>
+   </BuildAction>
+   <TestAction
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.GDB"
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      buildConfiguration = "Debug">
+      <Testables>
+      </Testables>
+   </TestAction>
+   <LaunchAction
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.GDB"
+      displayScaleIsEnabled = "NO"
+      displayScale = "1.00"
+      launchStyle = "0"
+      useCustomWorkingDirectory = "NO"
+      buildConfiguration = "Debug"
+      ignoresPersistentStateOnLaunch = "NO"
+      debugDocumentVersioning = "YES"
+      allowLocationSimulation = "YES">
+      <BuildableProductRunnable>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "A998C30C0BCD6B8C0072D495"
+            BuildableName = "aligner_statistics"
+            BlueprintName = "Gather Statistics"
+            ReferencedContainer = "container:TreeTester.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = "&quot;/Users/ventzi/Desktop/&#x43a;&#x443;&#x440;&#x441;&#x43e;&#x432;&#x435; - &#x443;&#x43d;&#x438;&#x432;&#x435;&#x440;&#x441;&#x438;&#x442;&#x435;&#x442;/ATTEMPT/data/HomeCentre/old_multiword/case_insensitive/giza/en/model/lex.0-0.f2n&quot;"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "&quot;/Users/ventzi/Desktop/&#x43a;&#x443;&#x440;&#x441;&#x43e;&#x432;&#x435; - &#x443;&#x43d;&#x438;&#x432;&#x435;&#x440;&#x441;&#x438;&#x442;&#x435;&#x442;/ATTEMPT/data/HomeCentre/old_multiword/case_insensitive/giza/fr/model/lex.0-0.f2n&quot;"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "&quot;/Users/ventzi/Desktop/&#x43a;&#x443;&#x440;&#x441;&#x43e;&#x432;&#x435; - &#x443;&#x43d;&#x438;&#x432;&#x435;&#x440;&#x441;&#x438;&#x442;&#x435;&#x442;/ATTEMPT/data/HomeCentre/old_multiword/case_insensitive/giza/en/model/phrase-table.0-0&quot;"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "&quot;/Users/ventzi/Desktop/&#x43a;&#x443;&#x440;&#x441;&#x43e;&#x432;&#x435; - &#x443;&#x43d;&#x438;&#x432;&#x435;&#x440;&#x441;&#x438;&#x442;&#x435;&#x442;/ATTEMPT/data/ICHEC/&#x43d;&#x43e;&#x432;&#x438; &#x435;&#x43a;&#x441;&#x43f;&#x435;&#x440;&#x438;&#x43c;&#x435;&#x43d;&#x442;&#x438;/HomeCentre/100_25/&#x434;&#x430;&#x43d;&#x43d;&#x438;/manual/gold/aligned.txt&quot;"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "&quot;/Users/ventzi/Desktop/&#x43a;&#x443;&#x440;&#x441;&#x43e;&#x432;&#x435; - &#x443;&#x43d;&#x438;&#x432;&#x435;&#x440;&#x441;&#x438;&#x442;&#x435;&#x442;/ATTEMPT/data/john.nobackup/ef-dcu.aligned.clean.filtered"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "&quot;/Users/ventzi/Desktop/&#x43a;&#x443;&#x440;&#x441;&#x43e;&#x432;&#x435; - &#x443;&#x43d;&#x438;&#x432;&#x435;&#x440;&#x441;&#x438;&#x442;&#x435;&#x442;/EuroMatrixPlus/Symantec TMs/latest_data/training_data/EN-US/model/lex.e2f&quot;"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "&quot;/Users/ventzi/Desktop/&#x43a;&#x443;&#x440;&#x441;&#x43e;&#x432;&#x435; - &#x443;&#x43d;&#x438;&#x432;&#x435;&#x440;&#x441;&#x438;&#x442;&#x435;&#x442;/EuroMatrixPlus/Symantec TMs/latest_data/training_data/FR-FR/model/lex.e2f&quot;"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "&quot;/Users/ventzi/Desktop/&#x43a;&#x443;&#x440;&#x441;&#x43e;&#x432;&#x435; - &#x443;&#x43d;&#x438;&#x432;&#x435;&#x440;&#x441;&#x438;&#x442;&#x435;&#x442;/EuroMatrixPlus/Symantec TMs/latest_data/training_data/New_availability.utf8.lc.treebank.EN-US_FR-FR&quot;"
+            isEnabled = "YES">
+         </CommandLineArgument>
+      </CommandLineArguments>
+      <AdditionalOptions>
+      </AdditionalOptions>
+   </LaunchAction>
+   <ProfileAction
+      displayScaleIsEnabled = "NO"
+      displayScale = "1.00"
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      savedToolIdentifier = ""
+      useCustomWorkingDirectory = "NO"
+      buildConfiguration = "Release"
+      debugDocumentVersioning = "YES">
+      <BuildableProductRunnable>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "A998C30C0BCD6B8C0072D495"
+            BuildableName = "aligner_statistics"
+            BlueprintName = "Gather Statistics"
+            ReferencedContainer = "container:TreeTester.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
+   </ProfileAction>
+   <AnalyzeAction
+      buildConfiguration = "Debug">
+   </AnalyzeAction>
+   <ArchiveAction
+      buildConfiguration = "Release"
+      revealArchiveInOrganizer = "YES">
+   </ArchiveAction>
+</Scheme>
