@@ -1572,10 +1572,6 @@
 					EVALUATE,
 				);
 				INSTALL_PATH = "$(HOME)/bin";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"/usr/lib/gcc/i686-apple-darwin9/4.2.1\"",
-				);
 				PRODUCT_NAME = print_tagged_sentences;
 				ZERO_LINK = YES;
 			};
@@ -1603,10 +1599,6 @@
 					EVALUATE,
 				);
 				INSTALL_PATH = "$(HOME)/bin";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"/usr/lib/gcc/i686-apple-darwin9/4.2.1\"",
-				);
 				PRODUCT_NAME = print_tagged_sentences;
 			};
 			name = Release;
@@ -1641,10 +1633,6 @@
 				);
 				GCC_USE_GCC3_PFE_SUPPORT = YES;
 				INSTALL_PATH = "$(HOME)/bin";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"/usr/lib/gcc/i686-apple-darwin9/4.2.1\"",
-				);
 				PRODUCT_NAME = extract_DOP_grammar;
 				ZERO_LINK = NO;
 			};
@@ -1672,10 +1660,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(inherited)";
 				GCC_USE_GCC3_PFE_SUPPORT = YES;
 				INSTALL_PATH = "$(HOME)/bin";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"/usr/lib/gcc/i686-apple-darwin9/4.2.1\"",
-				);
 				PRODUCT_NAME = extract_DOP_grammar;
 				ZERO_LINK = NO;
 			};
@@ -1732,15 +1716,8 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/sw/lib,
-					"\"/usr/lib/gcc/i686-apple-darwin9/4.2.1\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = "";
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-falign-loops=16",
-					"-fno-schedule-insns",
-					"-fno-schedule-insns2",
-				);
 				PRODUCT_NAME = align_lattice;
 				SKIP_INSTALL = YES;
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = dynamic;
@@ -1780,7 +1757,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = __debug2_lat__;
 				GCC_THREADSAFE_STATICS = NO;
 				GCC_USE_GCC3_PFE_SUPPORT = YES;
-				GCC_VERSION = 4.2;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
@@ -1788,15 +1764,8 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/sw/lib,
-					"\"/usr/lib/gcc/i686-apple-darwin9/4.2.1\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = "";
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-falign-loops=16",
-					"-fno-schedule-insns",
-					"-fno-schedule-insns2",
-				);
 				PRODUCT_NAME = align_lattice;
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = dynamic;
 			};
@@ -1841,15 +1810,8 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/sw/lib,
-					"\"/usr/lib/gcc/i686-apple-darwin9/4.2.1\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = "";
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-falign-loops=16",
-					"-fno-schedule-insns",
-					"-fno-schedule-insns2",
-				);
 				PRODUCT_NAME = align_lattice;
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = dynamic;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -1879,10 +1841,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(inherited)";
 				INSTALL_PATH = "$(HOME)/bin";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"/usr/lib/gcc/i686-apple-darwin9/4.2.1\"",
-				);
 				PRODUCT_NAME = integerise_DOP_grammar;
 				ZERO_LINK = YES;
 			};
@@ -1909,10 +1867,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "";
 				INSTALL_PATH = "$(HOME)/bin";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"/usr/lib/gcc/i686-apple-darwin9/4.2.1\"",
-				);
 				PRODUCT_NAME = integerise_DOP_grammar;
 			};
 			name = Release;
@@ -1967,7 +1921,6 @@
 				GCC_THREADSAFE_STATICS = NO;
 				GCC_UNROLL_LOOPS = YES;
 				GCC_USE_GCC3_PFE_SUPPORT = YES;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
@@ -1976,16 +1929,9 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/sw/lib,
-					"\"/usr/lib/gcc/i686-apple-darwin9/4.2.1\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = "";
 				ONLY_LINK_ESSENTIAL_SYMBOLS = NO;
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-falign-loops=16",
-					"-fno-schedule-insns",
-					"-fno-schedule-insns2",
-				);
 				PRODUCT_NAME = align;
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = dynamic;
 				ZERO_LINK = NO;
@@ -2025,22 +1971,14 @@
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "";
 				GCC_THREADSAFE_STATICS = NO;
 				GCC_USE_GCC3_PFE_SUPPORT = YES;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				INSTALL_PATH = "$(HOME)/bin";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/sw/lib,
-					"\"/usr/lib/gcc/i686-apple-darwin9/4.2.1\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = "";
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-falign-loops=16",
-					"-fno-schedule-insns",
-					"-fno-schedule-insns2",
-				);
 				PRODUCT_NAME = align;
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = dynamic;
 			};
@@ -2119,16 +2057,6 @@
 					EVALUATE,
 				);
 				INSTALL_PATH = "$(HOME)/bin";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"/usr/lib/gcc/i686-apple-darwin9/4.2.1\"",
-				);
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-falign-loops=16",
-					"-fno-schedule-insns",
-					"-fno-schedule-insns2",
-				);
 				PRODUCT_NAME = evaluate_aligner;
 				ZERO_LINK = YES;
 			};
@@ -2157,16 +2085,6 @@
 					LOWERCASE,
 				);
 				INSTALL_PATH = "$(HOME)/bin";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"/usr/lib/gcc/i686-apple-darwin9/4.2.1\"",
-				);
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-falign-loops=16",
-					"-fno-schedule-insns",
-					"-fno-schedule-insns2",
-				);
 				PRODUCT_NAME = evaluate_aligner;
 			};
 			name = Release;
@@ -2224,12 +2142,6 @@
 					/sw/lib,
 					/usr/lib,
 				);
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-falign-loops=16",
-					"-fno-schedule-insns",
-					"-fno-schedule-insns2",
-				);
 				PRODUCT_NAME = aligner_statistics;
 			};
 			name = Release;
@@ -2260,13 +2172,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"/usr/lib/gcc/i686-apple-darwin9/4.2.1\"",
-				);
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-falign-loops=16",
-					"-fno-schedule-insns",
-					"-fno-schedule-insns2",
-					"-fopenmp",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = Test;
@@ -2302,13 +2207,6 @@
 					"\"/usr/lib/gcc/i686-apple-darwin9/4.2.1\"",
 				);
 				OTHER_CFLAGS = "";
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-falign-loops=16",
-					"-fno-schedule-insns",
-					"-fno-schedule-insns2",
-					"-fopenmp",
-				);
 				OTHER_LDFLAGS = "-lgomp";
 				PREBINDING = NO;
 				PRODUCT_NAME = Test;
@@ -2341,19 +2239,9 @@
 					EXTRACT_CHUNKS,
 				);
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "";
-				GCC_VERSION = "";
 				INSTALL_PATH = "$(HOME)/bin";
 				LD_OPENMP_FLAGS = "";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"/usr/lib/gcc/i686-apple-darwin9/4.2.1\"",
-				);
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-falign-loops=16",
-					"-fno-schedule-insns",
-					"-fno-schedule-insns2",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = extract_chunks;
 			};
 			name = Debug;
@@ -2381,19 +2269,9 @@
 					"$(inherited)",
 					EXTRACT_CHUNKS,
 				);
-				GCC_VERSION = "";
 				INSTALL_PATH = "$(HOME)/bin";
 				LD_OPENMP_FLAGS = "";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"/usr/lib/gcc/i686-apple-darwin9/4.2.1\"",
-				);
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-falign-loops=16",
-					"-fno-schedule-insns",
-					"-fno-schedule-insns2",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = extract_chunks;
 			};
 			name = Release;
@@ -2421,19 +2299,9 @@
 					"$(inherited)",
 					EXTRACT_CHUNKS,
 				);
-				GCC_VERSION = "";
 				INSTALL_PATH = "$(HOME)/bin";
 				LD_OPENMP_FLAGS = "";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"/usr/lib/gcc/i686-apple-darwin9/4.2.1\"",
-				);
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-falign-loops=16",
-					"-fno-schedule-insns",
-					"-fno-schedule-insns2",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = extract_chunks;
 			};
 			name = Profile;
@@ -2467,10 +2335,6 @@
 				);
 				GCC_USE_GCC3_PFE_SUPPORT = YES;
 				INSTALL_PATH = "$(HOME)/bin";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"/usr/lib/gcc/i686-apple-darwin9/4.2.1\"",
-				);
 				PRODUCT_NAME = extract_DOT_grammar;
 				ZERO_LINK = NO;
 			};
@@ -2501,16 +2365,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(inherited)";
 				GCC_USE_GCC3_PFE_SUPPORT = YES;
 				INSTALL_PATH = "$(HOME)/bin";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"/usr/lib/gcc/i686-apple-darwin9/4.2.1\"",
-				);
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-falign-loops=16",
-					"-fno-schedule-insns",
-					"-fno-schedule-insns2",
-				);
 				PRODUCT_NAME = extract_DOT_grammar;
 				ZERO_LINK = NO;
 			};
@@ -2542,10 +2396,6 @@
 				GCC_USE_GCC3_PFE_SUPPORT = YES;
 				GENERATE_PROFILING_CODE = YES;
 				INSTALL_PATH = "$(HOME)/bin";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"/usr/lib/gcc/i686-apple-darwin9/4.2.1\"",
-				);
 				PRODUCT_NAME = extract_DOT_grammar;
 				ZERO_LINK = NO;
 			};
@@ -2721,22 +2571,14 @@
 				);
 				GCC_THREADSAFE_STATICS = NO;
 				GCC_USE_GCC3_PFE_SUPPORT = YES;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				INSTALL_PATH = "$(HOME)/bin";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/sw/lib,
-					"\"/usr/lib/gcc/i686-apple-darwin9/4.2.1\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = "";
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-falign-loops=16",
-					"-fno-schedule-insns",
-					"-fno-schedule-insns2",
-				);
 				PRODUCT_NAME = align;
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = dynamic;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -2785,16 +2627,6 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PREPROCESSOR_DEFINITIONS = EVALUATE;
 				INSTALL_PATH = "$(HOME)/bin";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"/usr/lib/gcc/i686-apple-darwin9/4.2.1\"",
-				);
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-falign-loops=16",
-					"-fno-schedule-insns",
-					"-fno-schedule-insns2",
-				);
 				PRODUCT_NAME = evaluate_aligner;
 			};
 			name = Profile;
@@ -2852,10 +2684,6 @@
 					EVALUATE,
 				);
 				INSTALL_PATH = "$(HOME)/bin";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"/usr/lib/gcc/i686-apple-darwin9/4.2.1\"",
-				);
 				PRODUCT_NAME = print_tagged_sentences;
 			};
 			name = Profile;
@@ -2882,10 +2710,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(inherited)";
 				GCC_USE_GCC3_PFE_SUPPORT = YES;
 				INSTALL_PATH = "$(HOME)/bin";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"/usr/lib/gcc/i686-apple-darwin9/4.2.1\"",
-				);
 				PRODUCT_NAME = extract_DOP_grammar;
 				ZERO_LINK = NO;
 			};
@@ -2912,10 +2736,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "";
 				INSTALL_PATH = "$(HOME)/bin";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"/usr/lib/gcc/i686-apple-darwin9/4.2.1\"",
-				);
 				PRODUCT_NAME = integerise_DOP_grammar;
 			};
 			name = Profile;
@@ -2974,16 +2794,6 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INSTALL_PATH = "$(HOME)/bin";
 				LD_OPENMP_FLAGS = "";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\\\"/usr/lib/gcc/i686-apple-darwin9/4.2.1\\\"",
-				);
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-falign-loops=16",
-					"-fno-schedule-insns",
-					"-fno-schedule-insns2",
-				);
 				PRODUCT_NAME = extract_chunks;
 			};
 			name = Debug;
@@ -3015,16 +2825,6 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INSTALL_PATH = "$(HOME)/bin";
 				LD_OPENMP_FLAGS = "";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\\\"/usr/lib/gcc/i686-apple-darwin9/4.2.1\\\"",
-				);
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-falign-loops=16",
-					"-fno-schedule-insns",
-					"-fno-schedule-insns2",
-				);
 				PRODUCT_NAME = extract_chunks;
 			};
 			name = Release;
@@ -3056,16 +2856,6 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INSTALL_PATH = "$(HOME)/bin";
 				LD_OPENMP_FLAGS = "";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\\\"/usr/lib/gcc/i686-apple-darwin9/4.2.1\\\"",
-				);
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-falign-loops=16",
-					"-fno-schedule-insns",
-					"-fno-schedule-insns2",
-				);
 				PRODUCT_NAME = extract_chunks;
 			};
 			name = Profile;
